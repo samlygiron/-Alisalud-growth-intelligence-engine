@@ -32,10 +32,17 @@ Proposed Architecture
 Moodle / MariaDB => Python => Snowflake => dbt / SQL => Analytical Models => New Customers
 An experience of how data can be transformed into useful business insights.
 
-Phase 1: Ingestion (Python to Snowflake Raw)
+***Phase 1: Ingestion (Python to Snowflake Raw)***
 The source database in hosted in a shared enviroment (cpanel) and we successfully resolved the access issue: 
    ***Secure Connection  SSH Tunnel***.- To avoid exposing the Database to the internet we estabilished and SSH tunnel using Python scripts.
    ***Enviroment Restrictions*** The cPanel terminal was disabled, so we used Cron Jobs to install dependencies and excute on-time commands and redirecting the output to log files for auditing purposes.
+  ***Dependency Managament*** We handled bynary incompatibilities (e.g. numy vs pandas) and compilers, by forcing the instalation of pre-compile wheels (only-binary=:all:), ensuring a stable Python enviroment.
+
+***Phase 2: Load (Snowflake Raw Layer)***
+- Incremental Loading (Watermark Strategy), ensuring onky new records.
+- Bulk Load to Snowflake, used write_pandas, bypassing row-by-row insertions and maximizing performance.
+- Cost Governance, implemented Snoflake Resource Monitors to control compute costs, setting and auto-suspend policy for the warehouse.
+  
 
 Expected Results
 
@@ -45,7 +52,10 @@ The Growth Intelligence Engine is currently under development. The expected outc
 
 This will provide a data-driven foundation to identify growth opportunities and support business decisions.
 
-Current Status: Development in progress.
+
+**Current Status:** 
+*   Phase 1 (Extraction) & Phase 2 (Load) Completed.
+*   Phase 3 (dbt Transformations) in progress.
    
 
 
